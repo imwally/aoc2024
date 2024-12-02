@@ -32,15 +32,22 @@ func main() {
 		rightSlice = append(rightSlice, rightNum)
 	}
 
-	sum := 0
+	similarityMap := make(map[int]int, len(leftSlice))
+
 	for i := 0; i < len(leftSlice); i++ {
-		timesFound := 0
-		for j := 0; j < len(rightSlice); j++ {
-			if leftSlice[i] == rightSlice[j] {
-				timesFound++
-			}
+		similarityMap[leftSlice[i]] = 0
+	}
+
+	for i := 0; i < len(rightSlice); i++ {
+		current := rightSlice[i]
+		if _, ok := similarityMap[current]; ok {
+			similarityMap[current]++
 		}
-		sum += leftSlice[i] * timesFound
+	}
+
+	sum := 0
+	for k, v := range similarityMap {
+		sum += k * v
 	}
 
 	fmt.Println(sum)
