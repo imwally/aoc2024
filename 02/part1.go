@@ -8,24 +8,42 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"strings"
 )
 
-const INPUT_FILE = "input.txt"
+const (
+	ASC = iota
+	DESC
+
+	INPUT_FILE = "input.txt"
+)
 
 func safe(line []byte) bool {
-	last, _ := strconv.Atoi(string(line[:2]))
-	for i := 0; i < len(line); i++ {
-		if i > 2 && line[i] != byte(' ') {
-			current := line[i : i+2]
-			currentInt, _ := strconv.Atoi(string(current))
-			diff := math.Abs(float64(currentInt) - float64(last))
-			fmt.Println(diff)
-			if diff > 3 || diff == 0 {
+	direction := ASC
+	nums := strings.Split(string(line), " ")
+
+	for i := 0; i < len(nums)-1; i++ {
+		a, _ := strconv.Atoi(nums[i])
+		b, _ := strconv.Atoi(nums[i+1])
+
+		if i == 0 {
+			if a > b {
+				direction = DESC
+			}
+		}
+
+		if i > 0 {
+			if direction == ASC && b < a {
 				return false
 			}
+			if direction == DESC && b > a {
+				return false
+			}
+		}
 
-			i = i + 2
-			last = currentInt
+		diff := math.Abs(float64(a) - float64(b))
+		if diff > 3 || diff == 0 {
+			return false
 		}
 	}
 
@@ -46,7 +64,8 @@ func main() {
 		if err == io.EOF {
 			break
 		}
-		if safe(line) {
+		safe := safe(line)
+		if safe {
 			sum++
 		}
 	}
