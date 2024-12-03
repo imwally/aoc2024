@@ -18,20 +18,19 @@ const (
 	INPUT_FILE = "input.txt"
 )
 
-func safe(line []byte) bool {
+func safe(nums []string) bool {
 	direction := ASC
-	nums := strings.Split(string(line), " ")
 
 	for i := 0; i < len(nums)-1; i++ {
 		a, _ := strconv.Atoi(nums[i])
 		b, _ := strconv.Atoi(nums[i+1])
 
-		if i == 0 {
-			if a > b {
-				direction = DESC
-			}
+		// Define initial sorting direction based on first two number
+		if i == 0 && a > b {
+			direction = DESC
 		}
 
+		// Does rest of slice continue with sorting direction
 		if i > 0 {
 			if direction == ASC && b < a {
 				return false
@@ -41,6 +40,7 @@ func safe(line []byte) bool {
 			}
 		}
 
+		// Unsafe difference check
 		diff := math.Abs(float64(a) - float64(b))
 		if diff > 3 || diff == 0 {
 			return false
@@ -64,7 +64,9 @@ func main() {
 		if err == io.EOF {
 			break
 		}
-		safe := safe(line)
+
+		nums := strings.Split(string(line), " ")
+		safe := safe(nums)
 		if safe {
 			sum++
 		}
