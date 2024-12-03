@@ -25,7 +25,7 @@ func safe(nums []string) bool {
 		a, _ := strconv.Atoi(nums[i])
 		b, _ := strconv.Atoi(nums[i+1])
 
-		// Define initial sorting direction based on first two number
+		// Define initial sorting direction based on first two numbers
 		if i == 0 && a > b {
 			direction = DESC
 		}
