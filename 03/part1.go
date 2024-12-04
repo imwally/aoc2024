@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-const INPUT_FILE = "input.txt"
+const INPUT_FILE = "test1.txt"
 
 func mul(exp string) int {
 	s := strings.Split(exp, ",")
