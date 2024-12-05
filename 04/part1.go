@@ -13,6 +13,18 @@ const KEY_WORD_REVERSED = "SAMX"
 
 const INPUT_COL_WIDTH = 140
 
+func occurances(s string) int {
+	sum := 0
+	if s == KEY_WORD {
+		sum++
+	}
+	if s == KEY_WORD_REVERSED {
+		sum++
+	}
+
+	return sum
+}
+
 func findHorizontal(data []byte, i int) int {
 	if i%INPUT_COL_WIDTH > INPUT_COL_WIDTH-len(KEY_WORD) {
 		return 0
@@ -22,16 +34,9 @@ func findHorizontal(data []byte, i int) int {
 		return 0
 	}
 
-	sum := 0
 	horizontal := string(data[i : i+len(KEY_WORD)])
-	if horizontal == KEY_WORD {
-		sum++
-	}
-	if horizontal == KEY_WORD_REVERSED {
-		sum++
-	}
 
-	return sum
+	return occurances(horizontal)
 }
 
 func findVertical(data []byte, i int) int {
@@ -45,17 +50,9 @@ func findVertical(data []byte, i int) int {
 	vertical[2] = data[i+INPUT_COL_WIDTH*2]
 	vertical[3] = data[i+INPUT_COL_WIDTH*3]
 
-	sum := 0
 	verticalString := string(vertical)
 
-	if verticalString == KEY_WORD {
-		sum++
-	}
-	if verticalString == KEY_WORD_REVERSED {
-		sum++
-	}
-
-	return sum
+	return occurances(verticalString)
 }
 
 func findDiagR(data []byte, i int) int {
@@ -73,16 +70,9 @@ func findDiagR(data []byte, i int) int {
 	diag[2] = data[i+2+(INPUT_COL_WIDTH*2)]
 	diag[3] = data[i+3+(INPUT_COL_WIDTH*3)]
 
-	sum := 0
 	diagString := string(diag)
-	if diagString == KEY_WORD {
-		sum++
-	}
-	if diagString == KEY_WORD_REVERSED {
-		sum++
-	}
 
-	return sum
+	return occurances(diagString)
 }
 
 func findDiagL(data []byte, i int) int {
@@ -100,16 +90,9 @@ func findDiagL(data []byte, i int) int {
 	diag[2] = data[i-2+(INPUT_COL_WIDTH*2)]
 	diag[3] = data[i-3+(INPUT_COL_WIDTH*3)]
 
-	sum := 0
 	diagString := string(diag)
-	if diagString == KEY_WORD {
-		sum++
-	}
-	if diagString == KEY_WORD_REVERSED {
-		sum++
-	}
 
-	return sum
+	return occurances(diagString)
 }
 
 func main() {
