@@ -7,11 +7,18 @@ import (
 	"os"
 )
 
-const INPUT_FILE = "input.txt"
-const KEY_WORD = "XMAS"
-const KEY_WORD_REVERSED = "SAMX"
+const (
+	HORIZONTAL = iota
+	VERTICAL
+	DIAG_DOWN_RIGHT
+	DIAG_DOWN_LEFT
 
-const INPUT_COL_WIDTH = 140
+	INPUT_FILE        = "input.txt"
+	KEY_WORD          = "XMAS"
+	KEY_WORD_REVERSED = "SAMX"
+
+	INPUT_COL_WIDTH = 140
+)
 
 func occurances(s string) int {
 	sum := 0
@@ -25,6 +32,29 @@ func occurances(s string) int {
 	return sum
 }
 
+func bytesInDirection(data []byte, i int, direction int) []byte {
+	b := make([]byte, len(KEY_WORD))
+	b[0] = data[i]
+
+	nextIndex := 0
+	for j := 1; j < len(KEY_WORD); j++ {
+		switch direction {
+		case HORIZONTAL:
+			nextIndex = i + j
+		case VERTICAL:
+			nextIndex = i + INPUT_COL_WIDTH*j
+		case DIAG_DOWN_RIGHT:
+			nextIndex = i + j + INPUT_COL_WIDTH*j
+		case DIAG_DOWN_LEFT:
+			nextIndex = i - j + INPUT_COL_WIDTH*j
+		}
+
+		b[j] = data[nextIndex]
+	}
+
+	return b
+}
+
 func findHorizontal(data []byte, i int) int {
 	if i%INPUT_COL_WIDTH > INPUT_COL_WIDTH-len(KEY_WORD) {
 		return 0
@@ -34,7 +64,7 @@ func findHorizontal(data []byte, i int) int {
 		return 0
 	}
 
-	horizontal := string(data[i : i+len(KEY_WORD)])
+	horizontal := string(bytesInDirection(data, i, HORIZONTAL))
 
 	return occurances(horizontal)
 }
@@ -44,13 +74,7 @@ func findVertical(data []byte, i int) int {
 		return 0
 	}
 
-	vertical := make([]byte, len(KEY_WORD))
-	vertical[0] = data[i]
-	vertical[1] = data[i+INPUT_COL_WIDTH]
-	vertical[2] = data[i+INPUT_COL_WIDTH*2]
-	vertical[3] = data[i+INPUT_COL_WIDTH*3]
-
-	verticalString := string(vertical)
+	verticalString := string(bytesInDirection(data, i, VERTICAL))
 
 	return occurances(verticalString)
 }
@@ -64,13 +88,7 @@ func findDiagR(data []byte, i int) int {
 		return 0
 	}
 
-	diag := make([]byte, len(KEY_WORD))
-	diag[0] = data[i]
-	diag[1] = data[i+1+INPUT_COL_WIDTH]
-	diag[2] = data[i+2+(INPUT_COL_WIDTH*2)]
-	diag[3] = data[i+3+(INPUT_COL_WIDTH*3)]
-
-	diagString := string(diag)
+	diagString := string(bytesInDirection(data, i, DIAG_DOWN_RIGHT))
 
 	return occurances(diagString)
 }
@@ -84,13 +102,7 @@ func findDiagL(data []byte, i int) int {
 		return 0
 	}
 
-	diag := make([]byte, len(KEY_WORD))
-	diag[0] = data[i]
-	diag[1] = data[i-1+INPUT_COL_WIDTH]
-	diag[2] = data[i-2+(INPUT_COL_WIDTH*2)]
-	diag[3] = data[i-3+(INPUT_COL_WIDTH*3)]
-
-	diagString := string(diag)
+	diagString := string(bytesInDirection(data, i, DIAG_DOWN_LEFT))
 
 	return occurances(diagString)
 }
