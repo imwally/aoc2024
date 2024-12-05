@@ -20,7 +20,8 @@ const (
 	INPUT_COL_WIDTH = 140
 )
 
-func occurances(s string) int {
+func occurances(data []byte) int {
+	s := string(data)
 	sum := 0
 	if s == KEY_WORD {
 		sum++
@@ -64,9 +65,7 @@ func findHorizontal(data []byte, i int) int {
 		return 0
 	}
 
-	horizontal := string(bytesInDirection(data, i, HORIZONTAL))
-
-	return occurances(horizontal)
+	return occurances(bytesInDirection(data, i, HORIZONTAL))
 }
 
 func findVertical(data []byte, i int) int {
@@ -74,9 +73,7 @@ func findVertical(data []byte, i int) int {
 		return 0
 	}
 
-	verticalString := string(bytesInDirection(data, i, VERTICAL))
-
-	return occurances(verticalString)
+	return occurances(bytesInDirection(data, i, VERTICAL))
 }
 
 func findDiagR(data []byte, i int) int {
@@ -88,9 +85,7 @@ func findDiagR(data []byte, i int) int {
 		return 0
 	}
 
-	diagString := string(bytesInDirection(data, i, DIAG_DOWN_RIGHT))
-
-	return occurances(diagString)
+	return occurances(bytesInDirection(data, i, DIAG_DOWN_RIGHT))
 }
 
 func findDiagL(data []byte, i int) int {
@@ -102,9 +97,7 @@ func findDiagL(data []byte, i int) int {
 		return 0
 	}
 
-	diagString := string(bytesInDirection(data, i, DIAG_DOWN_LEFT))
-
-	return occurances(diagString)
+	return occurances(bytesInDirection(data, i, DIAG_DOWN_LEFT))
 }
 
 func main() {
