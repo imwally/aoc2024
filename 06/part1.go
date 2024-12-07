@@ -9,11 +9,12 @@ import (
 )
 
 const (
-	INPUT_FILE = "test.txt"
-	WIDTH      = 10
+	INPUT_FILE = "input.txt"
+	WIDTH      = 130
 
 	OBSTACLE    = '#'
 	CLEAR       = '.'
+	VISITED     = 'X'
 	GUARD_NORTH = '^'
 	GUARD_EAST  = '>'
 	GUARD_SOUTH = 'V'
@@ -21,8 +22,17 @@ const (
 )
 
 func printMap(data []byte) {
-	for i, v := range data {
-		fmt.Printf("%s", string(v))
+	for i, _ := range data {
+		switch data[i] {
+		case CLEAR:
+			fmt.Printf("\033[1;32m%s", ".")
+		case VISITED:
+			fmt.Printf("\033[1;31m%s", "X")
+		case OBSTACLE:
+			fmt.Printf("\033[1;30m%s", "#")
+		default:
+			fmt.Printf("%s", "X")
+		}
 		if (i+1)%WIDTH == 0 {
 			fmt.Println()
 		}
@@ -35,41 +45,53 @@ func moveGuard(data []byte, pos int) int {
 	current := pos
 	if direction == GUARD_NORTH {
 		for current > 0 {
+			if current < 0 || current-WIDTH < 0 {
+				return -1
+			}
 			if data[current-WIDTH] == OBSTACLE {
 				data[current] = GUARD_EAST
 				return current
 			}
-			data[current] = 'X'
+			data[current] = VISITED
 			current -= WIDTH
 		}
 	}
 	if direction == GUARD_EAST {
 		for current%WIDTH < WIDTH {
+			if current%WIDTH > WIDTH || current%WIDTH+1 > WIDTH {
+				return -1
+			}
 			if data[current+1] == OBSTACLE {
 				data[current] = GUARD_SOUTH
 				return current
 			}
-			data[current] = 'X'
+			data[current] = VISITED
 			current++
 		}
 	}
 	if direction == GUARD_SOUTH {
 		for current < len(data) {
+			if current > len(data) || current+WIDTH > len(data) {
+				return -1
+			}
 			if data[current+WIDTH] == OBSTACLE {
 				data[current] = GUARD_WEST
 				return current
 			}
-			data[current] = 'X'
+			data[current] = VISITED
 			current += WIDTH
 		}
 	}
 	if direction == GUARD_WEST {
 		for current > 0 {
+			if current%WIDTH == 0 {
+				return -1
+			}
 			if data[current-1] == OBSTACLE {
 				data[current] = GUARD_NORTH
 				return current
 			}
-			data[current] = 'X'
+			data[current] = VISITED
 			current -= 1
 		}
 	}
@@ -87,6 +109,17 @@ func findGuard(data []byte) int {
 	return -1
 }
 
+func countVisited(data []byte) int {
+	sum := 0
+	for _, v := range data {
+		if v == VISITED {
+			sum++
+		}
+	}
+
+	return sum
+}
+
 func main() {
 	data, err := os.ReadFile(INPUT_FILE)
 	if err != nil {
@@ -95,64 +128,14 @@ func main() {
 
 	data = bytes.ReplaceAll(data, []byte("\n"), []byte(""))
 
-	fmt.Print("\033[H\033[2J")
 	printMap(data)
-	startingPos := findGuard(data)
-	next := moveGuard(data, startingPos)
+	next := findGuard(data)
+	for next > 0 {
+		time.Sleep(100 * time.Millisecond)
+		fmt.Print("\033[H\033[2J")
+		printMap(data)
+		next = moveGuard(data, next)
+	}
 
-	time.Sleep(1 * time.Second)
-	fmt.Print("\033[H\033[2J")
-	printMap(data)
-	next = moveGuard(data, next)
-
-	time.Sleep(1 * time.Second)
-	fmt.Print("\033[H\033[2J")
-	printMap(data)
-	next = moveGuard(data, next)
-
-	time.Sleep(1 * time.Second)
-	fmt.Print("\033[H\033[2J")
-	printMap(data)
-	next = moveGuard(data, next)
-
-	time.Sleep(1 * time.Second)
-	fmt.Print("\033[H\033[2J")
-	printMap(data)
-
-	next = moveGuard(data, next)
-
-	time.Sleep(1 * time.Second)
-	fmt.Print("\033[H\033[2J")
-	printMap(data)
-
-	next = moveGuard(data, next)
-
-	time.Sleep(1 * time.Second)
-	fmt.Print("\033[H\033[2J")
-	printMap(data)
-
-	next = moveGuard(data, next)
-
-	time.Sleep(1 * time.Second)
-	fmt.Print("\033[H\033[2J")
-	printMap(data)
-
-	next = moveGuard(data, next)
-
-	time.Sleep(1 * time.Second)
-	fmt.Print("\033[H\033[2J")
-	printMap(data)
-
-	next = moveGuard(data, next)
-
-	time.Sleep(1 * time.Second)
-	fmt.Print("\033[H\033[2J")
-	printMap(data)
-
-	next = moveGuard(data, next)
-
-	time.Sleep(1 * time.Second)
-	fmt.Print("\033[H\033[2J")
-	printMap(data)
-
+	fmt.Println(countVisited(data) + 1)
 }
